@@ -1,3 +1,7 @@
+/**
+ * Stefan Perkovic March 17 2023
+ */
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -45,8 +49,12 @@ public class SpellingBee {
     //  that will find the substrings recursively.
     public void generate() {
         gen("", letters);
+        System.out.println(words);
     }
 
+    /**
+     * Generates all possible words with the given letters
+     */
      public void gen(String word, String letters){
          if (letters.length() == 0){
              words.add(word);
@@ -55,7 +63,10 @@ public class SpellingBee {
         for (int i = 0; i < letters.length(); i++){
             gen(word + letters.charAt(i), letters.substring(0, i) + letters.substring(i + 1));
         }
-        if (word.length() > 0){
+         /**
+          * Don't want to add blank space
+          */
+        if (word.length() != 0){
             words.add(word);
         }
      }
@@ -68,6 +79,9 @@ public class SpellingBee {
         words = mergeSort(words);
     }
 
+    /**
+     * Sorts through the array and orders all words lexographically
+     */
     public ArrayList<String> mergeSort(ArrayList<String> fullWord){
         if (fullWord.size() <= 1){
             return fullWord;
@@ -87,7 +101,9 @@ public class SpellingBee {
         firstHalf = mergeSort(firstHalf);
         secondHalf = mergeSort(secondHalf);
 
-
+        /**
+         * Merges both the sorted halves
+         */
         while(!firstHalf.isEmpty() || !secondHalf.isEmpty()){
             if (firstHalf.isEmpty()){
                 fullWord.add(secondHalf.remove(0));
@@ -119,25 +135,36 @@ public class SpellingBee {
 
     // TODO: For each word in words, use binary search to see if it is in the dictionary.
     //  If it is not in the dictionary, remove it from words.
-    public void checkWords() {
 
+    /**
+     * Applies binary search to check if words are real
+     */
+    public void checkWords() {
         for (int i = 0; i < words.size(); i++){
-            int location = DICTIONARY_SIZE / 2;
+            int midpoint = DICTIONARY_SIZE / 2;
             String word = words.get(i);
-            while (word.compareTo(DICTIONARY[location]) != 0){
-                if (word.compareTo(DICTIONARY[location]) < 0){
-                    location /= 2;
-                }
-                else{
-                    location = (location / 2) + (location / 4);
-                }
-                if ((word.compareTo(DICTIONARY[location - 1]) > 0) && (word.compareTo(DICTIONARY[location + 1]) < 0)){
-                    words.remove(i);
+            int start = 0;
+            int end = DICTIONARY_SIZE;
+
+            while (start != end) {
+                if (word.compareTo(DICTIONARY[midpoint]) == 0){
                     break;
                 }
+                else if (word.compareTo(DICTIONARY[midpoint]) < 0) {
+                    end = midpoint - 1;
+                    midpoint = start + (end - start) / 2;
+                }
+                else {
+                    start = midpoint + 1;
+                    midpoint = start + (end - start) / 2;
+                }
+            }
+
+            if (!word.equals(DICTIONARY[midpoint])){
+                words.remove(i);
+                i--;
             }
         }
-        System.out.println(words);
 
     }
 
