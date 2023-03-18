@@ -44,15 +44,67 @@ public class SpellingBee {
     //  Store them all in the ArrayList words. Do this by calling ANOTHER method
     //  that will find the substrings recursively.
     public void generate() {
-        // YOUR CODE HERE — Call your recursive method!
+        gen("", letters);
     }
+
+     public void gen(String word, String letters){
+         if (letters.length() == 0){
+             words.add(word);
+             return;
+         }
+        for (int i = 0; i < letters.length(); i++){
+            gen(word + letters.charAt(i), letters.substring(0, i) + letters.substring(i + 1));
+        }
+        if (word.length() > 0){
+            words.add(word);
+        }
+     }
+
+
 
     // TODO: Apply mergesort to sort all words. Do this by calling ANOTHER method
     //  that will find the substrings recursively.
     public void sort() {
-        // YOUR CODE HERE
+        words = mergeSort(words);
     }
 
+    public ArrayList<String> mergeSort(ArrayList<String> fullWord){
+        if (fullWord.size() <= 1){
+            return fullWord;
+        }
+
+        ArrayList<String> firstHalf = new ArrayList<String>();
+        ArrayList<String> secondHalf = new ArrayList<String>();
+        int lenWords = fullWord.size() / 2;
+        for (int i = 0; i < lenWords; i++) {
+            firstHalf.add(fullWord.remove(0));
+        }
+        lenWords = fullWord.size();
+        for (int i = 0; i < lenWords; i++){
+            secondHalf.add(fullWord.remove(0));
+        }
+
+        firstHalf = mergeSort(firstHalf);
+        secondHalf = mergeSort(secondHalf);
+
+
+        while(!firstHalf.isEmpty() || !secondHalf.isEmpty()){
+            if (firstHalf.isEmpty()){
+                fullWord.add(secondHalf.remove(0));
+            }
+            else if (secondHalf.isEmpty()){
+                fullWord.add(firstHalf.remove(0));
+            }
+            else if (firstHalf.get(0).compareTo(secondHalf.get(0)) < 0){
+                fullWord.add(firstHalf.remove(0));
+            }
+            else{
+                fullWord.add(secondHalf.remove(0));
+            }
+        }
+        return fullWord;
+
+    }
     // Removes duplicates from the sorted list.
     public void removeDuplicates() {
         int i = 0;
@@ -68,7 +120,25 @@ public class SpellingBee {
     // TODO: For each word in words, use binary search to see if it is in the dictionary.
     //  If it is not in the dictionary, remove it from words.
     public void checkWords() {
-        // YOUR CODE HERE
+
+        for (int i = 0; i < words.size(); i++){
+            int location = DICTIONARY_SIZE / 2;
+            String word = words.get(i);
+            while (word.compareTo(DICTIONARY[location]) != 0){
+                if (word.compareTo(DICTIONARY[location]) < 0){
+                    location /= 2;
+                }
+                else{
+                    location = (location / 2) + (location / 4);
+                }
+                if ((word.compareTo(DICTIONARY[location - 1]) > 0) && (word.compareTo(DICTIONARY[location + 1]) < 0)){
+                    words.remove(i);
+                    break;
+                }
+            }
+        }
+        System.out.println(words);
+
     }
 
     // Prints all valid words to wordList.txt

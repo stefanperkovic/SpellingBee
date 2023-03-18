@@ -1,0 +1,15 @@
+a
+ab
+abd
+ad
+adb
+b
+ba
+bad
+bd
+bda
+d
+da
+dab
+db
+dba
